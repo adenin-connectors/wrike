@@ -1,7 +1,6 @@
 'use strict';
 
-const logger = require('@adenin/cf-logger');
-const handleError = require('@adenin/cf-activity').handleError;
+const cfActivity = require('@adenin/cf-activity');
 const api = require('./common/api');
 
 const totalMilisInADay = 86400000;
@@ -10,7 +9,11 @@ module.exports = async (activity) => {
   try {
     api.initialize(activity);
 
-    const response = await api();
+    const response = await api('/tasks?status=Active&sortField=DueDate&sortOrder=Asc');
+
+    if (!cfActivity.isResponseOk(activity, response)) {
+      return;
+    }
 
     let tasks = response.body.data;
 
@@ -25,7 +28,7 @@ module.exports = async (activity) => {
     if (noOfTasks > 0) {
       taskStatus = {
         ...taskStatus,
-        description: `You have ${noOfTasks} tasks due today`,
+        description: `You have ${noOfTasks > 1 ? noOfTasks + " tasks" : noOfTasks + " task"} due today`,
         color: 'blue',
         value: noOfTasks,
         actionable: true
@@ -41,7 +44,7 @@ module.exports = async (activity) => {
     activity.Response.Data = taskStatus;
 
   } catch (error) {
-    handleError(error, activity);
+    cfActivity.handleError(error, activity);
   }
 };
 /**returns numer of due tasks including overdue*/

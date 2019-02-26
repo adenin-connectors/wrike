@@ -6,7 +6,10 @@ const HttpsAgent = HttpAgent.HttpsAgent;
 
 let _activity = null;
 
-function api(opts) {
+function api(path, opts) {
+  if (typeof path !== 'string') {
+    return Promise.reject(new TypeError(`Expected \`path\` to be a string, got ${typeof path}`));
+  }
 
   opts = Object.assign({
     json: true,
@@ -27,8 +30,7 @@ function api(opts) {
     opts.headers.Authorization = `Bearer ${opts.token}`;
   }
 
-  let path = '/tasks';
-  const url = /^http(s)\:\/\/?/.test(path) && opts.endpoint ? path : opts.endpoint + path + "?status=Active&sortField=DueDate&sortOrder=Asc";
+  const url = /^http(s)\:\/\/?/.test(path) && opts.endpoint ? path : opts.endpoint + path;
 
   if (opts.stream) {
     return got.stream(url, opts);
