@@ -32,19 +32,19 @@ module.exports = async (activity) => {
         color: 'blue',
         value: noOfTasks,
         actionable: true
-      }
+      };
     } else {
       taskStatus = {
         ...taskStatus,
         description: `You have no tasks due today.`,
         actionable: false
-      }
+      };
     }
 
     activity.Response.Data = taskStatus;
 
   } catch (error) {
-    cfActivity.handleError(error, activity);
+    cfActivity.handleError(activity, error);
   }
 };
 /**returns numer of due tasks including overdue*/

@@ -40,20 +40,7 @@ function api(path, opts) {
     throw err;
   });
 }
-// convert response from /issues endpoint to 
-api.convertTasks = function (response) {
-  let items = [];
-  let tasks = response.body.data;
 
-  // iterate through each issue and extract id, title, etc. into a new array
-  for (let i = 0; i < tasks.length; i++) {
-    let raw = tasks[i];
-    let item = { id: raw.id, title: raw.title, description: raw.status, link: raw.permalink, raw: raw };
-    items.push(item);
-  }
-
-  return { items: items };
-}
 const helpers = [
   'get',
   'post',
