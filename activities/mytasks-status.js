@@ -3,13 +3,10 @@
 const cfActivity = require('@adenin/cf-activity');
 const api = require('./common/api');
 
-const totalMilisInADay = 86400000;
-
 module.exports = async (activity) => {
   try {
     api.initialize(activity);
-
-    const response = await api('/tasks?status=Active&sortField=DueDate&sortOrder=Asc');
+    const response = await api(`/tasks?status=Active&sortField=DueDate&sortOrder=Asc&dueDate={"end":"${getTomorowDateAsString()}"}`);
 
     if (!cfActivity.isResponseOk(activity, response)) {
       return;
@@ -23,7 +20,7 @@ module.exports = async (activity) => {
       urlLabel: 'All Tasks',
     };
 
-    let noOfTasks = getNoOfTasksDueToday(tasks);
+    let noOfTasks = tasks.length;
 
     if (noOfTasks > 0) {
       taskStatus = {
@@ -47,19 +44,9 @@ module.exports = async (activity) => {
     cfActivity.handleError(activity, error);
   }
 };
-/**returns numer of due tasks including overdue*/
-function getNoOfTasksDueToday(tasks) {
-  let currentMilis = new Date();
-  let counter = 0;
+/**returns tomorrows date as string*/
+function getTomorowDateAsString() {
+  let now = new Date();
 
-  for (let i = 0; i < tasks.length; i++) {
-    let dueDate = Date.parse(tasks[i].dates.due);
-
-    let diff = dueDate - currentMilis;
-    if (diff < totalMilisInADay) {
-      counter++;
-    }
-  }
-
-  return counter;
+  return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate() + 1}`;
 }
