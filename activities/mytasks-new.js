@@ -6,7 +6,12 @@ const api = require('./common/api');
 module.exports = async (activity) => {
   try {
     api.initialize(activity);
-    const response = await api(`/tasks?status=Active&sortField=DueDate&sortOrder=Asc&dueDate={"end":"${getTomorowDateAsString()}"}`);
+
+    var dateRange = cfActivity.dateRange(activity, "today");
+    let startDate = new Date(dateRange.startDate).toISOString().replace(".000", "");
+    let endDate = new Date(dateRange.endDate).toISOString().replace(".000", "");
+
+    const response = await api(`/tasks?status=Active&createdDate={"start":"${startDate}","end":"${endDate}"}`);
 
     if (!cfActivity.isResponseOk(activity, response)) {
       return;
@@ -15,7 +20,7 @@ module.exports = async (activity) => {
     let tasks = response.body.data;
 
     let taskStatus = {
-      title: 'Tasks Due Today',
+      title: 'New Tasks',
       url: 'https://www.wrike.com/workspace.htm?',
       urlLabel: 'All Tasks',
     };
@@ -25,7 +30,7 @@ module.exports = async (activity) => {
     if (noOfTasks > 0) {
       taskStatus = {
         ...taskStatus,
-        description: `You have ${noOfTasks > 1 ? noOfTasks + " tasks" : noOfTasks + " task"} due today`,
+        description: `You have ${noOfTasks > 1 ? noOfTasks + " new tasks" : noOfTasks + " new task"}.`,
         color: 'blue',
         value: noOfTasks,
         actionable: true
@@ -33,7 +38,7 @@ module.exports = async (activity) => {
     } else {
       taskStatus = {
         ...taskStatus,
-        description: `You have no tasks due today.`,
+        description: `You have no new tasks.`,
         actionable: false
       };
     }
@@ -43,9 +48,3 @@ module.exports = async (activity) => {
     cfActivity.handleError(activity, error);
   }
 };
-/**returns tomorrows date as string*/
-function getTomorowDateAsString() {
-  let now = new Date();
-
-  return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate() + 1}`;
-}
