@@ -8,20 +8,28 @@ module.exports = async function (activity) {
   try {
     api.initialize(activity);
 
-    const response = await api('/tasks?status=Active&sortField=DueDate&sortOrder=Asc');
+    let pagination = cfActivity.pagination(activity);
+    let url = `/tasks?status=Active&sortField=DueDate&sortOrder=Asc&pageSize=${pagination.pageSize}`;
+    if (pagination.nextpage) {
+      url += `&nextPageToken=${pagination.nextpage}`;
+    }
+    const response = await api(url);
 
     if (!cfActivity.isResponseOk(activity, response)) {
       return;
     }
 
     activity.Response.Data = convertResponse(response);
+    if (response.body.nextPageToken) {
+      activity.Response.Data._nextpage = response.body.nextPageToken;
+    }
   } catch (error) {
     cfActivity.handleError(activity, error);
   }
 };
 
 //**maps response data to items */
-function convertResponse (response) {
+function convertResponse(response) {
   let items = [];
   let tasks = response.body.data;
 
