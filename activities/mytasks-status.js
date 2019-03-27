@@ -11,8 +11,8 @@ module.exports = async (activity) => {
 
     let taskStatus = {
       title: T('Tasks Due Today'),
-      url: 'https://www.wrike.com/workspace.htm?',
-      urlLabel: T('All Tasks')
+      link: 'https://www.wrike.com/workspace.htm?',
+      linkLabel: T('All Tasks')
     };
 
     let noOfTasks = tasks.length;
