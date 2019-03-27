@@ -1,36 +1,30 @@
 'use strict';
-
-const cfActivity = require('@adenin/cf-activity');
 const api = require('./common/api');
 
 module.exports = async (activity) => {
   try {
-    api.initialize(activity);
-
-    var dateRange = cfActivity.dateRange(activity, "today");
+    var dateRange = Activity.dateRange("today");
     let startDate = new Date(dateRange.startDate).toISOString().replace(".000", "");
     let endDate = new Date(dateRange.endDate).toISOString().replace(".000", "");
 
     const response = await api(`/tasks?status=Active&createdDate={"start":"${startDate}","end":"${endDate}"}`);
 
-    if (!cfActivity.isResponseOk(activity, response)) {
-      return;
-    }
+    if (Activity.isErrorResponse(response)) return;
 
     let tasks = response.body.data;
 
     let taskStatus = {
-      title: 'New Tasks',
+      title: T('New Tasks'),
       url: 'https://www.wrike.com/workspace.htm?',
-      urlLabel: 'All Tasks',
+      urlLabel: T('All Tasks')
     };
 
     let noOfTasks = tasks.length;
-
+    
     if (noOfTasks > 0) {
       taskStatus = {
         ...taskStatus,
-        description: `You have ${noOfTasks > 1 ? noOfTasks + " new tasks" : noOfTasks + " new task"}.`,
+        description: noOfTasks > 1 ? T("You have {0} new tasks.", noOfTasks) : T("You have 1 new task."),
         color: 'blue',
         value: noOfTasks,
         actionable: true
@@ -38,13 +32,13 @@ module.exports = async (activity) => {
     } else {
       taskStatus = {
         ...taskStatus,
-        description: `You have no new tasks.`,
+        description: T(`You have no new tasks.`),
         actionable: false
       };
     }
 
     activity.Response.Data = taskStatus;
   } catch (error) {
-    cfActivity.handleError(activity, error);
+    Activity.handleError(error);
   }
 };

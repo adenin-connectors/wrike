@@ -1,20 +1,15 @@
 'use strict';
-
 const api = require('./common/api');
-const logger = require('@adenin/cf-logger');
-const cfActivity = require('@adenin/cf-activity');
+
 
 module.exports = async (activity) => {
 
   try {
-    api.initialize(activity);
     var data = {};
 
     const userPersonalFolder = await api('/folders');
 
-    if (!cfActivity.isResponseOk(activity, userPersonalFolder)) {
-      return;
-    }
+    if (Activity.isErrorResponse(response)) return;
 
     let personalFolderId = getPersonalFolderId(userPersonalFolder);
 
@@ -67,7 +62,7 @@ module.exports = async (activity) => {
 
   } catch (error) {
     // handle generic exception
-    cfActivity.handleError(activity, error);
+    Activity.handleError(error);
   }
 
   function getObjPath(obj, path) {

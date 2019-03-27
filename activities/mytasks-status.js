@@ -1,31 +1,26 @@
 'use strict';
-
-const cfActivity = require('@adenin/cf-activity');
 const api = require('./common/api');
 
 module.exports = async (activity) => {
   try {
-    api.initialize(activity);
     const response = await api(`/tasks?status=Active&sortField=DueDate&sortOrder=Asc&dueDate={"end":"${getTomorowDateAsString()}"}`);
 
-    if (!cfActivity.isResponseOk(activity, response)) {
-      return;
-    }
+    if (Activity.isErrorResponse(response)) return;
 
     let tasks = response.body.data;
 
     let taskStatus = {
-      title: 'Tasks Due Today',
+      title: T('Tasks Due Today'),
       url: 'https://www.wrike.com/workspace.htm?',
-      urlLabel: 'All Tasks',
+      urlLabel: T('All Tasks')
     };
 
     let noOfTasks = tasks.length;
-
+    
     if (noOfTasks > 0) {
       taskStatus = {
         ...taskStatus,
-        description: `You have ${noOfTasks > 1 ? noOfTasks + " tasks" : noOfTasks + " task"} due today`,
+        description: noOfTasks > 1 ? T("You have {0} tasks.", noOfTasks) : T("You have 1 task."),
         color: 'blue',
         value: noOfTasks,
         actionable: true
@@ -33,14 +28,14 @@ module.exports = async (activity) => {
     } else {
       taskStatus = {
         ...taskStatus,
-        description: `You have no tasks due today.`,
+        description: T(`You have no tasks due today.`),
         actionable: false
       };
     }
 
     activity.Response.Data = taskStatus;
   } catch (error) {
-    cfActivity.handleError(activity, error);
+    Activity.handleError(error);
   }
 };
 /**returns tomorrows date as string*/
