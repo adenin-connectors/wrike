@@ -58,4 +58,18 @@ for (const x of helpers) {
   api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, { method }));
 }
 
+//**maps response data to items */
+api.convertResponse = function (response) {
+  let items = [];
+  let tasks = response.body.data;
+
+  for (let i = 0; i < tasks.length; i++) {
+    let raw = tasks[i];
+    let item = { id: raw.id, title: raw.title, description: raw.status, link: raw.permalink, raw: raw };
+    items.push(item);
+  }
+
+  return { items: items };
+}
+
 module.exports = api;

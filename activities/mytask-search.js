@@ -4,7 +4,8 @@ const api = require('./common/api');
 module.exports = async function (activity) {
   try {
     let pagination = Activity.pagination();
-    let url = `/tasks?status=Active&sortField=DueDate&sortOrder=Asc&pageSize=${pagination.pageSize}`;
+    let searchParam = activity.Request.Query.query;
+    let url = `/tasks?status=Active&sortField=DueDate&sortOrder=Asc&pageSize=${pagination.pageSize}&title=${searchParam}`;
     if (pagination.nextpage) {
       url += `&nextPageToken=${pagination.nextpage}`;
     }
