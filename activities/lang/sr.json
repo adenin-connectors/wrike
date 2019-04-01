@@ -7,5 +7,8 @@
   "New Tasks": "Novi Zadaci",
   "You have {0} new tasks.": "Imate {0} nova zadatka.",
   "You have 1 new task.": "Imate 1 novi zadatak.",
-  "You have no new tasks.": "Nemate novih zadataka."
+  "You have no new tasks.": "Nemate novih zadataka.",
+  "Task {0} created" : "Zadatak {0} kreiran",
+  "Create Wrike Task" : "Kreiraj Wrike Zadatak",
+  "Create Task" : "Kreiraj Zadatak"
 }

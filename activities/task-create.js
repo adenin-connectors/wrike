@@ -1,6 +1,8 @@
 'use strict';
 const api = require('./common/api');
-
+const path = require('path');
+const yaml = require('js-yaml');
+const fs = require('fs');
 
 module.exports = async (activity) => {
 
@@ -9,7 +11,7 @@ module.exports = async (activity) => {
 
     const userPersonalFolder = await api('/folders');
 
-    if (Activity.isErrorResponse(response)) return;
+    if (Activity.isErrorResponse(userPersonalFolder)) return;
 
     let personalFolderId = getPersonalFolderId(userPersonalFolder);
 
@@ -30,11 +32,12 @@ module.exports = async (activity) => {
           json: true,
           body: {
             title: form.subject,
-            description: form.description
+            description: form.description,
+            importance: form.priority
           }
         });
 
-        var comment = "Task created";
+        var comment = T("Task {0} created", response.body.data[0].id);
         data = getObjPath(activity.Request, "Data.model");
         data._action = {
           response: {
@@ -45,6 +48,11 @@ module.exports = async (activity) => {
         break;
 
       default:
+        var fname = __dirname + path.sep + "common" + path.sep + "task-create.form";
+        var schema = yaml.safeLoad(fs.readFileSync(fname, 'utf8'));
+
+        data.title = T("Create Wrike Task");
+        data.formSchema = schema;
         // initialize form subject with query parameter (if provided)
         if (activity.Request.Query && activity.Request.Query.query) {
           data = {
@@ -53,6 +61,13 @@ module.exports = async (activity) => {
             }
           }
         }
+        data._actionList = [{
+          id: "create",
+          label: T("Create Task"),
+          settings: {
+            actionType: "a"
+          }
+        }];
         break;
     }
 
