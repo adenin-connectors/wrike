@@ -3,24 +3,25 @@ const api = require('./common/api');
 
 module.exports = async (activity) => {
   try {
+    api.initialize(activity);
     const response = await api(`/tasks?status=Active&sortField=DueDate&sortOrder=Asc&dueDate={"end":"${getTomorowDateAsString()}"}`);
 
-    if (Activity.isErrorResponse(response)) return;
+    if ($.isErrorResponse(activity, response)) return;
 
     let tasks = response.body.data;
 
     let taskStatus = {
-      title: T('Tasks Due Today'),
+      title: T(activity, 'Tasks Due Today'),
       link: 'https://www.wrike.com/workspace.htm?',
-      linkLabel: T('All Tasks')
+      linkLabel: T(activity, 'All Tasks')
     };
 
     let noOfTasks = tasks.length;
-    
+
     if (noOfTasks > 0) {
       taskStatus = {
         ...taskStatus,
-        description: noOfTasks > 1 ? T("You have {0} tasks.", noOfTasks) : T("You have 1 task."),
+        description: noOfTasks > 1 ? T(activity, "You have {0} tasks.", noOfTasks) : T(activity, "You have 1 task."),
         color: 'blue',
         value: noOfTasks,
         actionable: true
@@ -28,14 +29,14 @@ module.exports = async (activity) => {
     } else {
       taskStatus = {
         ...taskStatus,
-        description: T(`You have no tasks due today.`),
+        description: T(activity, `You have no tasks due today.`),
         actionable: false
       };
     }
 
     activity.Response.Data = taskStatus;
   } catch (error) {
-    Activity.handleError(error);
+    $.handleError(activity, error);
   }
 };
 /**returns tomorrows date as string*/

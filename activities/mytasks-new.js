@@ -3,28 +3,29 @@ const api = require('./common/api');
 
 module.exports = async (activity) => {
   try {
-    var dateRange = Activity.dateRange("today");
+    var dateRange = $.dateRange(activity, "today");
     let startDate = new Date(dateRange.startDate).toISOString().replace(".000", "");
     let endDate = new Date(dateRange.endDate).toISOString().replace(".000", "");
 
+    api.initialize(activity);
     const response = await api(`/tasks?status=Active&createdDate={"start":"${startDate}","end":"${endDate}"}`);
 
-    if (Activity.isErrorResponse(response)) return;
+    if ($.isErrorResponse(activity, response)) return;
 
     let tasks = response.body.data;
 
     let taskStatus = {
-      title: T('New Tasks'),
+      title: T(activity, 'New Tasks'),
       link: 'https://www.wrike.com/workspace.htm?',
-      linkLabel: T('All Tasks')
+      linkLabel: T(activity, 'All Tasks')
     };
 
     let noOfTasks = tasks.length;
-    
+
     if (noOfTasks > 0) {
       taskStatus = {
         ...taskStatus,
-        description: noOfTasks > 1 ? T("You have {0} new tasks.", noOfTasks) : T("You have 1 new task."),
+        description: noOfTasks > 1 ? T(activity, "You have {0} new tasks.", noOfTasks) : T(activity, "You have 1 new task."),
         color: 'blue',
         value: noOfTasks,
         actionable: true
@@ -32,13 +33,13 @@ module.exports = async (activity) => {
     } else {
       taskStatus = {
         ...taskStatus,
-        description: T(`You have no new tasks.`),
+        description: T(activity, `You have no new tasks.`),
         actionable: false
       };
     }
 
     activity.Response.Data = taskStatus;
   } catch (error) {
-    Activity.handleError(error);
+    $.handleError(activity, error);
   }
 };
