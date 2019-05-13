@@ -1,8 +1,0 @@
-ServiceName: 'mytasks-status'
-InterfaceName: 'status'
-Description: 'My Wrike Tasks Status'
-APIDoc: ''
-Interfaces: 'search,pagination'
-RequiredScopes: ''
-AdditionalParameters:
-Method: ''

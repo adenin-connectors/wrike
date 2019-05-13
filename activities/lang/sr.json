@@ -1,10 +1,9 @@
 {
-  "Tasks Due Today": "Zadaci Za Danas",
+  "Active Tasks": "Aktivni Zadaci",
   "All Tasks": "Svi Zadaci",
   "You have {0} tasks.": "Imate {0} zadatka.",
   "You have 1 task.": "Imate 1 zadatak.",
-  "You have no tasks due today.": "Nemate zadataka za danas.",
-  "New Tasks": "Novi Zadaci",
+  "You have no tasks.": "Nemate zadataka.",
   "You have {0} new tasks.": "Imate {0} nova zadatka.",
   "You have 1 new task.": "Imate 1 novi zadatak.",
   "You have no new tasks.": "Nemate novih zadataka.",
