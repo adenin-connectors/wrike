@@ -1,8 +1,0 @@
-ServiceName: 'mytask-search'
-InterfaceName: 'items'
-Description: 'My Task Search'
-APIDoc: ''
-Interfaces: 'search,pagination'
-RequiredScopes: ''
-AdditionalParameters:
-Method: ''
