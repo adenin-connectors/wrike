@@ -1,19 +1,20 @@
 'use strict';
 const api = require('./common/api');
 
-module.exports = async (activity) => {
+module.exports = async function (activity) {
   try {
     api.initialize(activity);
+    let pagination = $.pagination(activity);
     var dateRange = $.dateRange(activity, "today");
     let startDate = new Date(dateRange.startDate).toISOString().replace(".000", "");
     let endDate = new Date(dateRange.endDate).toISOString().replace(".000", "");
-    let pagination = $.pagination(activity);
-    let url = `/tasks?status=Active&createdDate={"start":"${startDate}","end":"${endDate}"}&pageSize=${pagination.pageSize}`;
+    let url = `/tasks?sortField=DueDate&sortOrder=Asc&pageSize=${pagination.pageSize}` +
+      `&createdDate={"start":"${startDate}","end":"${endDate}"}`;
     if (pagination.nextpage) {
       url += `&nextPageToken=${pagination.nextpage}`;
     }
     // when we don't fetch all items we get all tasks count in response.
-    let valueUrl = `/tasks?status=Active&createdDate={"start":"${startDate}","end":"${endDate}"}&pageSize=1`;
+    let valueUrl = `/tasks?sortField=DueDate&sortOrder=Asc&pageSize=1&createdDate={"start":"${startDate}","end":"${endDate}"}`;
 
     const promises = [];
     promises.push(api(url));
@@ -27,7 +28,7 @@ module.exports = async (activity) => {
     const value = responses[1].body.responseSize;
 
     activity.Response.Data.items = api.convertResponse(tasks);
-    activity.Response.Data.title = T(activity, 'New Tasks');
+    activity.Response.Data.title = T(activity, 'All Tasks');
     activity.Response.Data.link = 'https://www.wrike.com/workspace.htm?';
     activity.Response.Data.linkLabel = T(activity, 'All Tasks');
     activity.Response.Data.actionable = value > 0;
@@ -35,10 +36,10 @@ module.exports = async (activity) => {
     if (value > 0) {
       activity.Response.Data.value = value;
       activity.Response.Data.color = 'blue';
-      activity.Response.Data.description = value > 1 ? T(activity, "You have {0} new tasks.", value)
-        : T(activity, "You have 1 new task.");
+      activity.Response.Data.description = value > 1 ? T(activity, "You have {0} tasks.", value)
+        : T(activity, "You have 1 task.");
     } else {
-      activity.Response.Data.description = T(activity, `You have no new tasks.`);
+      activity.Response.Data.description = T(activity, `You have no tasks.`);
     }
     if (tasks.body.nextPageToken) activity.Response.Data._nextpage = tasks.body.nextPageToken;
   } catch (error) {

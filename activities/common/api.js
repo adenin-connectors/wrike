@@ -56,8 +56,8 @@ api.stream = (url, opts) => got(url, Object.assign({}, opts, {
 
 for (const x of helpers) {
   const method = x.toUpperCase();
-  api[x] = (url, opts) => api(url, Object.assign({}, opts, {method}));
-  api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, {method}));
+  api[x] = (url, opts) => api(url, Object.assign({}, opts, { method }));
+  api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, { method }));
 }
 
 //**maps response data to items */
@@ -71,6 +71,7 @@ api.convertResponse = function (response) {
       id: raw.id,
       title: raw.title,
       description: raw.status,
+      date: new Date(raw.createdDate).toISOString(),
       link: raw.permalink,
       raw: raw
     };
@@ -78,9 +79,7 @@ api.convertResponse = function (response) {
     items.push(item);
   }
 
-  return {
-    items: items
-  };
+  return { items };
 };
 
 module.exports = api;

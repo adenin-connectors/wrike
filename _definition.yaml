@@ -25,7 +25,5 @@ Custom3Label: Custom Field 3
 Custom3Hint: ''
 Scopes:
 - ScopeName: wsReadWrite
-  ScopeDescription: Read and Wrike Tasks
+  ScopeDescription: Read And Write Tasks
   IsDefault: false
-
-  

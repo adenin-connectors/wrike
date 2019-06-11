@@ -1,7 +1,0 @@
-InterfaceName: 'status'
-Description: 'My Recent Tasks'
-APIDoc: ''
-Interfaces: 'daterange,pagination,status'
-RequiredScopes: ''
-AdditionalParameters:
-Method: ''
