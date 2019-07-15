@@ -5,7 +5,7 @@ module.exports = async function (activity) {
   try {
     api.initialize(activity);
     let pagination = $.pagination(activity);
-    var dateRange = $.dateRange(activity, "today");
+    var dateRange = $.dateRange(activity);
     let startDate = new Date(dateRange.startDate).toISOString().replace(".000", "");
     let endDate = new Date(dateRange.endDate).toISOString().replace(".000", "");
     let url = `/tasks?sortOrder=Desc&sortField=CreatedDate&pageSize=${pagination.pageSize}` +
